@@ -30,5 +30,12 @@ const project =[
   },
 ];
 function App(){
-  
+  const [nightMode, setNightMode] = useState(false);
+  const [soundOn, setSoundOn] = useState(false);
+  const [secretFound, setSecretFound] = useState(false);
+
+   function discoverStar() {
+    setSecretFound(true);
+  }
+
 }
