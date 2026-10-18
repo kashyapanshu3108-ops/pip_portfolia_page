@@ -2,33 +2,63 @@
 import { useState } from "react";
 import "./App.css";
 
+
 const projects = [
   {
     number: "01",
     icon: "♫",
     title: "The Lullaby Lab",
     description:
-      "A tiny music box filled with sleepy melodies, floating notes, and little moments of magic.",
+      "A magical music box filled with sleepy melodies, floating notes, and soothing bedtime moments.",
     tag: "SOUND & DREAMS",
     color: "lullaby",
+    image: "/images/pip_lullaby_box.png",
   },
   {
     number: "02",
     icon: "☾",
     title: "Nightlight Collection",
     description:
-      "A collection of glowing moon lamps designed to make every bedtime feel a little safer.",
+      "Discover glowing moon lamps and dreamy lanterns designed to make bedtime feel magical.",
     tag: "LIGHT & COMFORT",
     color: "nightlight",
+    image: "/images/pip_dream_lantern.png",
   },
   {
     number: "03",
     icon: "✧",
     title: "Dream Delivery Routes",
     description:
-      "Follow Pip across sleepy rooftops as little dream parcels find their way home.",
+      "Join Pip on a whimsical journey across sleepy rooftops to deliver little parcels of dreams.",
     tag: "ADVENTURE & STORIES",
     color: "delivery",
+  },
+  {
+    number: "04",
+    icon: "🧸",
+    title: "Rattle & Block Toys",
+    description:
+      "Explore a tiny toy workshop filled with playful rattles, colourful blocks, and interactive surprises.",
+    tag: "PLAY & DISCOVERY",
+    color: "toys",
+  },
+  {
+    number: "05",
+    icon: "📖",
+    title: "Bedtime Storybook",
+    description:
+      "Step into Pip's illustrated bedtime stories, where friendly creatures discover stars and happy dreams.",
+    tag: "STORIES & WONDER",
+    color: "storybook",
+  },
+  {
+    number: "06",
+    icon: "📏",
+    title: "Pip's Growth Chart",
+    description:
+      "A nursery-wall-inspired collection celebrating Pip's growing imagination, new skills, and little milestones.",
+    tag: "GROW & LEARN",
+    color: "growth",
   },
 ];
 
