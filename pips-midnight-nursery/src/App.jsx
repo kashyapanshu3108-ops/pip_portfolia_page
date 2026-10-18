@@ -1,16 +1,18 @@
+
 import { useState } from "react";
 import "./App.css";
 
-const project =[
-  {    number: "01",
+const projects = [
+  {
+    number: "01",
     icon: "♫",
     title: "The Lullaby Lab",
     description:
       "A tiny music box filled with sleepy melodies, floating notes, and little moments of magic.",
     tag: "SOUND & DREAMS",
     color: "lullaby",
-},
- {
+  },
+  {
     number: "02",
     icon: "☾",
     title: "Nightlight Collection",
@@ -29,14 +31,16 @@ const project =[
     color: "delivery",
   },
 ];
-function App(){
+
+function App() {
   const [nightMode, setNightMode] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
   const [secretFound, setSecretFound] = useState(false);
 
-   function discoverStar() {
+  function discoverStar() {
     setSecretFound(true);
   }
+
   return (
     <main className={nightMode ? "app night-mode" : "app"}>
       <header className="navbar">
@@ -220,7 +224,7 @@ function App(){
         {soundOn ? "Sound toggle is on" : "Sound is muted"}
       </div>
     </main>
-    );
-
+  );
 }
+
 export default App;
