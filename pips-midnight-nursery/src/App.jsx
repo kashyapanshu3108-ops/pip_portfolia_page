@@ -42,7 +42,7 @@ const projects = [
       "Explore a tiny toy workshop filled with playful rattles, colourful blocks, and interactive surprises.",
     tag: "PLAY & DISCOVERY",
     color: "toys",
-    image: "/images/pip_toys.png",
+    image: "/images/pip_toys_.png",
 
   },
   {
@@ -155,11 +155,18 @@ function App() {
           <span className="floating-star star-four">✧</span>
 
           <div className="dream-cloud cloud-back" />
-          <img
-            className="pip-image"
-            src="/images/pip-reference-sketch.jpg"
-            alt="Pip, a cute baby dream engineer wearing a starry nightcap and holding a glowing lantern"
-          />
+
+<div className="pip-character">
+  <img
+    className="pip-image"
+    src="/images/pip-reference-sketch.jpg"
+    alt="Pip, a cute baby dreamer with a starry nightcap and glowing lantern"
+  />
+
+  <span className="eye-glow eye-glow-left" aria-hidden="true" />
+  <span className="eye-glow eye-glow-right" aria-hidden="true" />
+</div>
+
 
           <button
             className="secret-star"
