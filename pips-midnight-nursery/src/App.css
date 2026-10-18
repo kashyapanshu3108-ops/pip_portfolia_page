@@ -1,0 +1,18 @@
+.app {
+  --bg: #fff8f1;
+  --surface: rgba(255, 253, 249, 0.84);
+  --text: #773c52;
+  --muted: #a57887;
+  --accent: #b83e70;
+  --accent-light: #f7dce5;
+  --border: #f1d1d9;
+  --shadow: 0 18px 55px rgba(153, 76, 105, 0.09);
+
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 82% 10%, #ffefd9 0, transparent 32%),
+    var(--bg);
+  transition: background 0.4s ease, color 0.4s ease;
+}
