@@ -32,6 +32,7 @@ const projects = [
       "Join Pip on a whimsical journey across sleepy rooftops to deliver little parcels of dreams.",
     tag: "ADVENTURE & STORIES",
     color: "delivery",
+    image: "/images/pip_glowing.png",
   },
   {
     number: "04",
@@ -41,6 +42,8 @@ const projects = [
       "Explore a tiny toy workshop filled with playful rattles, colourful blocks, and interactive surprises.",
     tag: "PLAY & DISCOVERY",
     color: "toys",
+    image: "/images/pip_toys.png",
+
   },
   {
     number: "05",
@@ -50,6 +53,8 @@ const projects = [
       "Step into Pip's illustrated bedtime stories, where friendly creatures discover stars and happy dreams.",
     tag: "STORIES & WONDER",
     color: "storybook",
+   image: "/images/pip_stories.png",
+
   },
   {
     number: "06",
@@ -59,6 +64,7 @@ const projects = [
       "A nursery-wall-inspired collection celebrating Pip's growing imagination, new skills, and little milestones.",
     tag: "GROW & LEARN",
     color: "growth",
+        image: "/images/pip_growth.png",
   },
 ];
 
@@ -209,13 +215,28 @@ function App() {
               className={`project-card ${project.color}`}
               key={project.number}
             >
-              <div className="project-visual">
-                <span className="project-number">{project.number}</span>
-                <span className="project-visual-icon" aria-hidden="true">
-                  {project.icon}
-                </span>
-                <span className="project-sparkle">✧</span>
-              </div>
+
+<div className="project-visual">
+  <span className="project-number">{project.number}</span>
+
+  {project.image ? (
+    <img
+      className="project-image"
+      src={project.image}
+      alt={project.title}
+      loading="lazy"
+    />
+  ) : (
+    <span className="project-visual-icon" aria-hidden="true">
+      {project.icon}
+    </span>
+  )}
+
+  <span className="project-sparkle" aria-hidden="true">
+    ✧
+  </span>
+</div>
+
 
               <div className="project-content">
                 <span className="project-tag">{project.tag}</span>
