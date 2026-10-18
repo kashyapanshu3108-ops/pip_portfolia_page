@@ -843,3 +843,67 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Pip's magical eye highlights */
+
+
+.pip-character {
+  width: min(100%, 450px);
+  position: relative;
+  isolation: isolate;
+  animation: pip-float 5s ease-in-out infinite;
+}
+
+.pip-character .pip-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  animation: none;
+}
+
+
+.eye-glow {
+  position: absolute;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff8cf;
+  box-shadow:
+    0 0 5px 2px rgba(255, 224, 137, 0.9),
+    0 0 15px 5px rgba(255, 190, 93, 0.38);
+  pointer-events: none;
+  animation: eye-twinkle 3s ease-in-out infinite;
+}
+
+.eye-glow-left {
+  left: 40.5%;
+  top: 42.3.%;
+}
+
+.eye-glow-right {
+  left: 63%;
+  top: 38.5%;
+  animation-delay: 1.2s;
+}
+
+
+@keyframes eye-twinkle {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eye-glow {
+    animation: none;
+  }
+}
