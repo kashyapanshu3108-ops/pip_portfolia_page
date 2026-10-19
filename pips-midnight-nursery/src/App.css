@@ -907,3 +907,73 @@
     animation: none;
   }
 }
+
+.project-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.lullaby-panel {
+  position: relative;
+  overflow: hidden;
+  margin-top: 18px;
+  padding: 20px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255, 222, 158, 0.4), transparent 35%),
+    var(--accent-light);
+  animation: reveal 0.35s ease both;
+}
+
+.lullaby-panel h4 {
+  margin: 8px 0;
+  font-family: "Fredoka", sans-serif;
+  font-size: 18px;
+}
+
+.lullaby-panel p {
+  min-height: 0;
+  font-size: 12px;
+}
+
+.lullaby-note {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 26px;
+  animation: music-sway 2s ease-in-out infinite;
+}
+
+.lullaby-orbit {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  color: #d7a657;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes music-sway {
+  0%, 100% {
+    transform: translateY(0) rotate(-8deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lullaby-note,
+  .lullaby-orbit {
+    animation: none;
+  }
+}
+
+
+
+
+
+
