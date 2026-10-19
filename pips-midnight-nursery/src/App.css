@@ -972,7 +972,20 @@
   }
 }
 
+.project-content .music-player {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 22px;
+  box-sizing: border-box;
+}
 
+.project-content {
+  min-width: 0;
+}
+
+.project-content .music-player-art {
+  width: 100%;
+}
 
 
 

@@ -254,6 +254,7 @@ function App() {
 <button
   type="button"
   className="project-link"
+ 
 onClick={() => {
   if (project.title === "The Lullaby Lab") {
     setLullabyOpen((open) => !open);
@@ -266,6 +267,11 @@ onClick={() => {
   }
 }}
 >
+  {lullabyOpen && project.title === "The Lullaby Lab"
+    ? "Close music box"
+    : project.title === "The Lullaby Lab"
+      ? "Open music box"
+      : "Discover the story"}
   {project.title === "The Lullaby Lab"
     ? lullabyOpen
       ? "Close music box"
@@ -273,24 +279,19 @@ onClick={() => {
     : "Discover the story"}
   <span>↗</span>
 </button>
-{/* {project.title === "The Lullaby Lab" && lullabyOpen && (
+{project.title === "The Lullaby Lab" && lullabyOpen && (
   <MusicBox
     musicPlaying={musicPlaying}
     setMusicPlaying={setMusicPlaying}
   />
-)} */}
+)}
 
               </div>
             </article>
           ))}
         </div>
       </section>
-<div hidden={!lullabyOpen}>
-  <MusicBox
-    musicPlaying={musicPlaying}
-    setMusicPlaying={setMusicPlaying}
-  />
-</div>
+
       <section className="story-section" id="story">
         <div className="story-moon">☾</div>
         <span className="eyebrow">A NOTE FROM PIP</span>
