@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "./App.css";
 
 
@@ -72,7 +71,7 @@ function App() {
   const [nightMode, setNightMode] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
   const [secretFound, setSecretFound] = useState(false);
-
+  const [lullabyOpen, setLullabyOpen] = useState(false);
   function discoverStar() {
     setSecretFound(true);
   }
@@ -249,9 +248,31 @@ function App() {
                 <span className="project-tag">{project.tag}</span>
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
-                <a href="#story" className="project-link">
-                  Discover the story <span>↗</span>
-                </a>
+
+<button
+  type="button"
+  className="project-link"
+  onClick={() => {
+    if (project.title === "The Lullaby Lab") {
+      setLullabyOpen(!lullabyOpen);
+    } else {
+      document.getElementById("story")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  }}
+>
+  {project.title === "The Lullaby Lab"
+    ? lullabyOpen
+      ? "Close music box"
+      : "Open music box"
+    : "Discover the story"}
+  <span>↗</span>
+</button>
+{project.title === "The Lullaby Lab" && lullabyOpen && (
+  <MusicBox />
+)}
+
               </div>
             </article>
           ))}
@@ -282,6 +303,209 @@ function App() {
         {soundOn ? "Sound toggle is on" : "Sound is muted"}
       </div>
     </main>
+  );
+}
+
+function MusicBox() {
+  const audioRef = useRef(null);
+  const masterRef = useRef(null);
+  const timerRef = useRef(null);
+  const noteIndexRef = useRef(0);
+  const playingRef = useRef(false);
+
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(55);
+
+  // A gentle original lullaby: notes generated in the browser.
+  const melody = [
+    523.25, 659.25, 783.99, 659.25,
+    587.33, 698.46, 880.00, 698.46,
+    523.25, 659.25, 783.99, 1046.50,
+    880.00, 783.99, 659.25, 523.25,
+  ];
+
+  const getAudio = useCallback(async () => {
+    const AudioContextClass =
+      window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContextClass) {
+      throw new Error("Web Audio API is not supported in this browser.");
+    }
+
+    if (!audioRef.current) {
+      const ctx = new AudioContextClass();
+      const master = ctx.createGain();
+
+      master.gain.value = muted ? 0 : (volume / 100) * 0.18;
+      master.connect(ctx.destination);
+
+      audioRef.current = ctx;
+      masterRef.current = master;
+    }
+
+    const ctx = audioRef.current;
+
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    return ctx;
+  }, [muted, volume]);
+
+  const playNote = useCallback(async (frequency) => {
+    const ctx = await getAudio();
+    const now = ctx.currentTime;
+
+    // Two soft tones make the sound feel more like a music box.
+    [1, 2].forEach((harmonic, index) => {
+      const oscillator = ctx.createOscillator();
+      const envelope = ctx.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(
+        frequency * harmonic,
+        now
+      );
+
+      const peak = index === 0 ? 0.65 : 0.16;
+
+      envelope.gain.setValueAtTime(0.0001, now);
+      envelope.gain.exponentialRampToValueAtTime(
+        peak, now + 0.025
+      );
+      envelope.gain.exponentialRampToValueAtTime(
+        0.0001, now + 0.8
+      );
+
+      oscillator.connect(envelope);
+      envelope.connect(masterRef.current);
+
+      oscillator.start(now);
+      oscillator.stop(now + 0.82);
+    });
+  }, [getAudio]);
+
+  const stop = useCallback(() => {
+    playingRef.current = false;
+    setPlaying(false);
+
+    if (timerRef.current !== null) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const start = useCallback(async () => {
+    if (playingRef.current) return;
+
+    try {
+      await getAudio();
+
+      playingRef.current = true;
+      setPlaying(true);
+
+      // Play immediately, then continue through the melody.
+      const tick = () => {
+        if (!playingRef.current) return;
+
+        const frequency =
+          melody[noteIndexRef.current % melody.length];
+
+        noteIndexRef.current =
+          (noteIndexRef.current + 1) % melody.length;
+
+        playNote(frequency).catch((error) => {
+          console.error("Unable to play note:", error);
+          stop();
+        });
+      };
+
+      tick();
+      timerRef.current = window.setInterval(tick, 420);
+    } catch (error) {
+      console.error("Music box unavailable:", error);
+      stop();
+    }
+  }, [getAudio, melody, playNote, stop]);
+
+  useEffect(() => {
+    if (masterRef.current) {
+      masterRef.current.gain.setTargetAtTime(
+        muted ? 0 : (volume / 100) * 0.18,
+        audioRef.current.currentTime,
+        0.025
+      );
+    }
+  }, [muted, volume]);
+
+  useEffect(() => {
+    return () => {
+      playingRef.current = false;
+
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
+      }
+
+      if (audioRef.current) {
+        audioRef.current.close();
+      }
+    };
+  }, []);
+
+  return (
+    <div className="music-player">
+      <div className="music-player-art" aria-hidden="true">
+        <span className={playing ? "music-note dancing" : "music-note"}>
+          ♫
+        </span>
+        <span className="music-star">✦</span>
+        <span className="music-star second">✧</span>
+      </div>
+
+      <p className="eyebrow">PIP'S ORIGINAL SOUND MACHINE</p>
+      <h3>The Little Lullaby</h3>
+      <p className="music-description" aria-live="polite">
+        {playing
+          ? "The stars are singing... sweet dreams!"
+          : "A tiny melody made from digital stardust."}
+      </p>
+
+      <div className="music-controls">
+        <button
+          className="music-play"
+          onClick={playing ? stop : start}
+        >
+          {playing ? "Ⅱ  Pause lullaby" : "▶  Play lullaby"}
+        </button>
+
+        <button
+          className="music-mute"
+          onClick={() => setMuted((value) => !value)}
+          aria-pressed={muted}
+          aria-label={muted ? "Unmute lullaby" : "Mute lullaby"}
+        >
+          {muted ? "🔇 Unmute" : "🔊 Mute"}
+        </button>
+      </div>
+
+      <label className="volume-control">
+        <span>Volume</span>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={volume}
+          onChange={(event) => setVolume(Number(event.target.value))}
+          aria-label="Lullaby volume"
+        />
+        <span>{volume}%</span>
+      </label>
+
+      <p className="audio-note">
+        Generated live with the Web Audio API · No audio files
+      </p>
+    </div>
   );
 }
 
