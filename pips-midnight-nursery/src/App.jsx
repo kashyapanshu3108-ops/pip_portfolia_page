@@ -72,6 +72,8 @@ function App() {
   const [soundOn, setSoundOn] = useState(false);
   const [secretFound, setSecretFound] = useState(false);
   const [lullabyOpen, setLullabyOpen] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  const [selectedStory, setSelectedStory] = useState(null);
   function discoverStar() {
     setSecretFound(true);
   }
@@ -102,14 +104,14 @@ function App() {
             {nightMode ? "☀" : "☾"}
           </button>
 
-          <button
-            className="sound-button"
-            onClick={() => setSoundOn(!soundOn)}
-            aria-pressed={soundOn}
-            title="Sound is a visual toggle in this first version"
-          >
-            {soundOn ? "♫ Sound On" : "♫ Sound Off"}
-          </button>
+<button
+  className="sound-button"
+  onClick={() => setMusicPlaying((playing) => !playing)}
+  aria-pressed={musicPlaying}
+  title="Toggle lullaby music"
+>
+  {musicPlaying ? "♫ Sound On" : "♫ Sound Off"}
+</button>
         </div>
       </header>
 
@@ -252,15 +254,17 @@ function App() {
 <button
   type="button"
   className="project-link"
-  onClick={() => {
-    if (project.title === "The Lullaby Lab") {
-      setLullabyOpen(!lullabyOpen);
-    } else {
-      document.getElementById("story")?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }
-  }}
+onClick={() => {
+  if (project.title === "The Lullaby Lab") {
+    setLullabyOpen((open) => !open);
+  } else {
+    setSelectedStory(project);
+
+    document.getElementById("story")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+}}
 >
   {project.title === "The Lullaby Lab"
     ? lullabyOpen
@@ -269,25 +273,47 @@ function App() {
     : "Discover the story"}
   <span>↗</span>
 </button>
-{project.title === "The Lullaby Lab" && lullabyOpen && (
-  <MusicBox />
-)}
+{/* {project.title === "The Lullaby Lab" && lullabyOpen && (
+  <MusicBox
+    musicPlaying={musicPlaying}
+    setMusicPlaying={setMusicPlaying}
+  />
+)} */}
 
               </div>
             </article>
           ))}
         </div>
       </section>
-
+<div hidden={!lullabyOpen}>
+  <MusicBox
+    musicPlaying={musicPlaying}
+    setMusicPlaying={setMusicPlaying}
+  />
+</div>
       <section className="story-section" id="story">
         <div className="story-moon">☾</div>
         <span className="eyebrow">A NOTE FROM PIP</span>
-        <h2>Every dream begins with a little <span>wonder.</span></h2>
-        <p>
-          Somewhere between the last lullaby and the first star, Pip found
-          a special kind of magic: helping little creatures drift into
-          their happiest dreams.
-        </p>
+<h2>
+  {selectedStory
+    ? `${selectedStory.title}: A Tiny Dream Adventure`
+    : <>Every dream begins with a little <span>wonder.</span></>}
+</h2>
+
+<p>
+  {selectedStory
+    ? `${selectedStory.description} Pip sprinkles a little stardust, follows the moonlight, and discovers a new way to make bedtime magical. What will Pip discover next?`
+    : "Somewhere between the last lullaby and the first star, Pip found a special kind of magic: helping little creatures drift into their happiest dreams."}
+</p>
+
+{selectedStory && (
+  <button
+    className="secondary-button"
+    onClick={() => setSelectedStory(null)}
+  >
+    Back to Pip's original story ↺
+  </button>
+)}
         <a className="primary-button" href="#home">
           Back to the nursery ↑
         </a>
@@ -306,24 +332,23 @@ function App() {
   );
 }
 
-function MusicBox() {
+function MusicBox({ musicPlaying, setMusicPlaying }) {
   const audioRef = useRef(null);
   const masterRef = useRef(null);
   const timerRef = useRef(null);
   const noteIndexRef = useRef(0);
   const playingRef = useRef(false);
 
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
+const playing = musicPlaying;
+const setPlaying = setMusicPlaying;  const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(55);
 
-  // A gentle original lullaby: notes generated in the browser.
-  const melody = [
-    523.25, 659.25, 783.99, 659.25,
-    587.33, 698.46, 880.00, 698.46,
-    523.25, 659.25, 783.99, 1046.50,
-    880.00, 783.99, 659.25, 523.25,
-  ];
+ const melody = useRef([
+  523.25, 659.25, 783.99, 659.25,
+  587.33, 698.46, 880.00, 698.46,
+  523.25, 659.25, 783.99, 1046.50,
+  880.00, 783.99, 659.25, 523.25,
+]).current;
 
   const getAudio = useCallback(async () => {
     const AudioContextClass =
@@ -386,15 +411,16 @@ function MusicBox() {
     });
   }, [getAudio]);
 
-  const stop = useCallback(() => {
-    playingRef.current = false;
-    setPlaying(false);
+const stop = useCallback(() => {
+  playingRef.current = false;
 
-    if (timerRef.current !== null) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
+  if (timerRef.current !== null) {
+    window.clearInterval(timerRef.current);
+    timerRef.current = null;
+  }
+
+  setMusicPlaying(false);
+}, [setMusicPlaying]);
 
   const start = useCallback(async () => {
     if (playingRef.current) return;
@@ -428,7 +454,13 @@ function MusicBox() {
       stop();
     }
   }, [getAudio, melody, playNote, stop]);
-
+useEffect(() => {
+  if (musicPlaying) {
+    start();
+  } else {
+    stop();
+  }
+}, [musicPlaying, start, stop]);
   useEffect(() => {
     if (masterRef.current) {
       masterRef.current.gain.setTargetAtTime(
